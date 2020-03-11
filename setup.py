@@ -55,7 +55,7 @@ else:
     coverage = True
 
 fasttext_src_files = map(str, os.listdir(FASTTEXT_SRC))
-fasttext_src_cc = list(filter(lambda x: x.endswith('.cc'), fasttext_src_files))
+fasttext_src_cc = list(filter(lambda x: x.endswith('.cc') or x.endswith('.cpp'), fasttext_src_files))
 
 fasttext_src_cc = list(
     map(lambda x: str(os.path.join(FASTTEXT_SRC, x)), fasttext_src_cc)

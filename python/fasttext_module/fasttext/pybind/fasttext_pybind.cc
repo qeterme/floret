@@ -10,6 +10,7 @@
 #include <autotune.h>
 #include <densematrix.h>
 #include <fasttext.h>
+#include <MurmurHash3.h>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -103,6 +104,8 @@ PYBIND11_MODULE(fasttext_pybind, m) {
       .def_readwrite("bucket", &fasttext::Args::bucket)
       .def_readwrite("minn", &fasttext::Args::minn)
       .def_readwrite("maxn", &fasttext::Args::maxn)
+      .def_readwrite("hashOnly", &fasttext::Args::hashOnly)
+      .def_readwrite("hashCount", &fasttext::Args::hashCount)
       .def_readwrite("thread", &fasttext::Args::thread)
       .def_readwrite("t", &fasttext::Args::t)
       .def_readwrite("label", &fasttext::Args::label)

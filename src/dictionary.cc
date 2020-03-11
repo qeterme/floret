@@ -7,6 +7,7 @@
  */
 
 #include "dictionary.h"
+#include "MurmurHash3.h"
 
 #include <assert.h>
 
@@ -108,7 +109,7 @@ void Dictionary::getSubwords(
   int32_t i = getId(word);
   ngrams.clear();
   substrings.clear();
-  if (i >= 0) {
+  if (!args_->hashOnly && i >= 0) {
     ngrams.push_back(i);
     substrings.push_back(words_[i].word);
   }
@@ -169,10 +170,30 @@ uint32_t Dictionary::hash(const std::string& str) const {
   return h;
 }
 
+void Dictionary::murmurhash(const std::string& str, std::vector<uint32_t>* keys) const {
+  uint32_t entropy[4];
+  const uint8_t* key = reinterpret_cast<const uint8_t*>(str.c_str());
+  MurmurHash3_x64_128(key, str.size(), MURMURHASH_SEED, (void*) &entropy);
+  for (int i = 0; i < args_->hashCount; i++) {
+    keys->push_back(entropy[i]);
+  }
+}
+
 void Dictionary::computeSubwords(
     const std::string& word,
     std::vector<int32_t>& ngrams,
     std::vector<std::string>* substrings) const {
+  if (args_->hashOnly) {
+    std::vector<uint32_t> hashes;
+    murmurhash(word, &hashes);
+    for (uint32_t hash : hashes) {
+      int32_t h = hash % args_->bucket;
+      pushHash(ngrams, h);
+    }
+    if (substrings) {
+      substrings->push_back(word);
+    }
+  }
   for (size_t i = 0; i < word.size(); i++) {
     std::string ngram;
     if ((word[i] & 0xC0) == 0x80) {
@@ -184,8 +205,17 @@ void Dictionary::computeSubwords(
         ngram.push_back(word[j++]);
       }
       if (n >= args_->minn && !(n == 1 && (i == 0 || j == word.size()))) {
-        int32_t h = hash(ngram) % args_->bucket;
-        pushHash(ngrams, h);
+        if (args_->hashOnly) {
+          std::vector<uint32_t> hashes;
+          murmurhash(ngram, &hashes);
+          for (size_t i = 0; i < hashes.size(); i++) {
+            int32_t h = hashes[i] % args_->bucket;
+            pushHash(ngrams, h);
+          }
+	} else {
+          int32_t h = hash(ngram) % args_->bucket;
+          pushHash(ngrams, h);
+	}
         if (substrings) {
           substrings->push_back(ngram);
         }
@@ -201,6 +231,10 @@ void Dictionary::initNgrams() {
     words_[i].subwords.push_back(i);
     if (words_[i].word != EOS) {
       computeSubwords(word, words_[i].subwords);
+    }
+    // remove word-index subword for all words except 0 (</s>)
+    if (args_->hashOnly && i > 0) {
+      words_[i].subwords.erase(words_[i].subwords.begin());
     }
   }
 }

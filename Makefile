@@ -8,7 +8,7 @@
 
 CXX = c++
 CXXFLAGS = -pthread -std=c++11 -march=native
-OBJS = args.o autotune.o matrix.o dictionary.o loss.o productquantizer.o densematrix.o quantmatrix.o vector.o model.o utils.o meter.o fasttext.o
+OBJS = args.o autotune.o matrix.o dictionary.o MurmurHash3.o loss.o productquantizer.o densematrix.o quantmatrix.o vector.o model.o utils.o meter.o fasttext.o
 INCLUDES = -I.
 
 opt: CXXFLAGS += -O3 -funroll-loops -DNDEBUG
@@ -35,8 +35,11 @@ autotune.o: src/autotune.cc src/autotune.h
 matrix.o: src/matrix.cc src/matrix.h
 	$(CXX) $(CXXFLAGS) -c src/matrix.cc
 
-dictionary.o: src/dictionary.cc src/dictionary.h src/args.h
+dictionary.o: src/dictionary.cc src/dictionary.h src/args.h src/MurmurHash3.h
 	$(CXX) $(CXXFLAGS) -c src/dictionary.cc
+
+MurmurHash3.o: src/MurmurHash3.cpp src/MurmurHash3.h
+	$(CXX) $(CXXFLAGS) -c src/MurmurHash3.cpp
 
 loss.o: src/loss.cc src/loss.h src/matrix.h src/real.h
 	$(CXX) $(CXXFLAGS) -c src/loss.cc

@@ -101,7 +101,8 @@ class _FastText(object):
             arg_names = ['lr', 'dim', 'ws', 'epoch', 'minCount',
                          'minCountLabel', 'minn', 'maxn', 'neg', 'wordNgrams',
                          'loss', 'bucket', 'thread', 'lrUpdateRate', 't',
-                         'label', 'verbose', 'pretrainedVectors']
+                         'label', 'verbose', 'pretrainedVectors',
+                         'hashOnly', 'hashCount']
             for arg_name in arg_names:
                 setattr(self, arg_name, getattr(args, arg_name))
 
@@ -446,6 +447,8 @@ unsupervised_default = {
     'minCountLabel': 0,
     'minn': 3,
     'maxn': 6,
+    'hashOnly': False,
+    'hashCount': 1,
     'neg': 5,
     'wordNgrams': 1,
     'loss': "ns",
@@ -545,8 +548,9 @@ def train_unsupervised(*kargs, **kwargs):
     part of the fastText repository.
     """
     arg_names = ['input', 'model', 'lr', 'dim', 'ws', 'epoch', 'minCount',
-                 'minCountLabel', 'minn', 'maxn', 'neg', 'wordNgrams', 'loss', 'bucket',
-                 'thread', 'lrUpdateRate', 't', 'label', 'verbose', 'pretrainedVectors']
+                 'minCountLabel', 'minn', 'maxn', 'neg', 'wordNgrams', 'loss',
+                 'bucket', 'hashCount', 'hashOnly', 'thread', 'lrUpdateRate',
+                 't', 'label', 'verbose', 'pretrainedVectors']
     args, manually_set_args = read_args(kargs, kwargs, arg_names,
                                         unsupervised_default)
     a = _build_args(args, manually_set_args)

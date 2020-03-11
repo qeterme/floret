@@ -31,6 +31,8 @@ Args::Args() {
   bucket = 2000000;
   minn = 3;
   maxn = 6;
+  hashOnly = false;
+  hashCount = 1;
   thread = 12;
   lrUpdateRate = 100;
   t = 1e-4;
@@ -173,6 +175,16 @@ void Args::parseArgs(const std::vector<std::string>& args) {
         minn = std::stoi(args.at(ai + 1));
       } else if (args[ai] == "-maxn") {
         maxn = std::stoi(args.at(ai + 1));
+      } else if (args[ai] == "-hashOnly") {
+	hashOnly = true;
+	ai--;
+      } else if (args[ai] == "-hashCount") {
+	hashCount = std::stoi(args.at(ai + 1));
+        if (hashCount < 1 or hashCount >= 5) {
+	  std::cerr << "Unsupported hashCount (range: 1-4): " << hashCount << std::endl;
+          printHelp();
+          exit(EXIT_FAILURE);
+        }
       } else if (args[ai] == "-thread") {
         thread = std::stoi(args.at(ai + 1));
       } else if (args[ai] == "-t") {
@@ -229,8 +241,11 @@ void Args::parseArgs(const std::vector<std::string>& args) {
     printHelp();
     exit(EXIT_FAILURE);
   }
-  if (wordNgrams <= 1 && maxn == 0 && !hasAutotune()) {
+  if (wordNgrams <= 1 && maxn == 0 && !hasAutotune() && !hashOnly) {
     bucket = 0;
+  }
+  if (!hashOnly) {
+    hashCount = 1;
   }
 }
 
@@ -263,6 +278,10 @@ void Args::printDictionaryHelp() {
             << "]\n"
             << "  -maxn               max length of char ngram [" << maxn
             << "]\n"
+            << "  -hashOnly           word and char ngrams hashed in buckets ["
+	    << boolToString(hashOnly) << "]\n"
+            << "  -hashCount          with hashOnly: number of hashes per word / subword ["
+	    << hashCount << "]\n"
             << "  -t                  sampling threshold [" << t << "]\n"
             << "  -label              labels prefix [" << label << "]\n";
 }
@@ -334,6 +353,8 @@ void Args::save(std::ostream& out) {
   out.write((char*)&(bucket), sizeof(int));
   out.write((char*)&(minn), sizeof(int));
   out.write((char*)&(maxn), sizeof(int));
+  out.write((char*)&(hashOnly), sizeof(bool));
+  out.write((char*)&(hashCount), sizeof(int));
   out.write((char*)&(lrUpdateRate), sizeof(int));
   out.write((char*)&(t), sizeof(double));
 }
@@ -350,6 +371,8 @@ void Args::load(std::istream& in) {
   in.read((char*)&(bucket), sizeof(int));
   in.read((char*)&(minn), sizeof(int));
   in.read((char*)&(maxn), sizeof(int));
+  in.read((char*)&(hashOnly), sizeof(bool));
+  in.read((char*)&(hashCount), sizeof(int));
   in.read((char*)&(lrUpdateRate), sizeof(int));
   in.read((char*)&(t), sizeof(double));
 }
@@ -377,6 +400,10 @@ void Args::dump(std::ostream& out) const {
       << " " << minn << std::endl;
   out << "maxn"
       << " " << maxn << std::endl;
+  out << "hashOnly"
+      << " " << hashOnly << std::endl;
+  out << "hashCount"
+      << " " << hashCount << std::endl;
   out << "lrUpdateRate"
       << " " << lrUpdateRate << std::endl;
   out << "t"
