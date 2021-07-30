@@ -35,7 +35,6 @@ class Dictionary {
  protected:
   static const int32_t MAX_VOCAB_SIZE = 30000000;
   static const int32_t MAX_LINE_SIZE = 1024;
-  static const uint32_t MURMURHASH_SEED = 2166136261;
 
   int32_t find(const std::string&) const;
   int32_t find(const std::string&, uint32_t h) const;
@@ -66,6 +65,7 @@ class Dictionary {
   static const std::string EOS;
   static const std::string BOW;
   static const std::string EOW;
+  static const uint32_t MURMURHASH_SEED = 2166136261;
 
   explicit Dictionary(std::shared_ptr<Args>);
   explicit Dictionary(std::shared_ptr<Args>, std::istream&);
