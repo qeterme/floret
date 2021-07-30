@@ -159,6 +159,29 @@ void FastText::saveVectors(const std::string& filename) {
   ofs.close();
 }
 
+void FastText::saveHashOnlyVectors(const std::string& filename) {
+  if (!input_ || !output_) {
+    throw std::runtime_error("Model never trained");
+  }
+  std::ofstream ofs(filename);
+  if (!ofs.is_open()) {
+    throw std::invalid_argument(
+        filename + " cannot be opened for saving vectors!");
+  }
+  // header: bucket dim minn maxn hashCount hashSeed BOW EOW
+  ofs << args_->bucket << " " << args_->dim << " ";
+  ofs << args_->minn << " " << args_->maxn << " ";
+  ofs << args_->hashCount << " " << dict_->MURMURHASH_SEED << " ";
+  ofs << dict_->BOW << " " << dict_->EOW << std::endl;
+  Vector vec(args_->dim);
+  for (int32_t i = dict_->nwords(); i < dict_->nwords() + args_->bucket; i++) {
+    vec.zero();
+    addInputVector(vec, i);
+    ofs << i - dict_->nwords() << " " << vec << std::endl;
+  }
+  ofs.close();
+}
+
 void FastText::saveOutput(const std::string& filename) {
   std::ofstream ofs(filename);
   if (!ofs.is_open()) {

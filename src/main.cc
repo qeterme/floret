@@ -381,6 +381,9 @@ void train(const std::vector<std::string> args) {
   }
   fasttext->saveModel(outputFileName);
   fasttext->saveVectors(a.output + ".vec");
+  if (a.hashOnly) {
+    fasttext->saveHashOnlyVectors(a.output + ".hashvec");
+  }
   if (a.saveOutput) {
     fasttext->saveOutput(a.output + ".output");
   }

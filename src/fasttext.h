@@ -112,6 +112,8 @@ class FastText {
 
   void saveVectors(const std::string& filename);
 
+  void saveHashOnlyVectors(const std::string& filename);
+
   void saveModel(const std::string& filename);
 
   void saveOutput(const std::string& filename);
