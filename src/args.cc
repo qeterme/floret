@@ -278,9 +278,9 @@ void Args::printDictionaryHelp() {
             << "]\n"
             << "  -maxn               max length of char ngram [" << maxn
             << "]\n"
-            << "  -hashOnly           word and char ngrams hashed in buckets ["
+            << "  -hashOnly           both word and char ngrams hashed only in buckets ["
 	    << boolToString(hashOnly) << "]\n"
-            << "  -hashCount          with hashOnly: number of hashes per word / subword ["
+            << "  -hashCount          with hashOnly: number of hashes (1-4) per word / subword ["
 	    << hashCount << "]\n"
             << "  -t                  sampling threshold [" << t << "]\n"
             << "  -label              labels prefix [" << label << "]\n";
