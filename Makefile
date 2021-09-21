@@ -12,13 +12,13 @@ OBJS = args.o autotune.o matrix.o dictionary.o MurmurHash3.o loss.o productquant
 INCLUDES = -I.
 
 opt: CXXFLAGS += -O3 -funroll-loops -DNDEBUG
-opt: fasttext-bloom
+opt: floret
 
 coverage: CXXFLAGS += -O0 -fno-inline -fprofile-arcs --coverage
-coverage: fasttext-bloom
+coverage: floret
 
 debug: CXXFLAGS += -g -O0 -fno-inline
-debug: fasttext-bloom
+debug: floret
 
 wasm: webassembly/fasttext_wasm.js
 
@@ -68,11 +68,11 @@ meter.o: src/meter.cc src/meter.h
 fasttext.o: src/fasttext.cc src/*.h
 	$(CXX) $(CXXFLAGS) -c src/fasttext.cc
 
-fasttext-bloom: $(OBJS) src/fasttext.cc src/main.cc
-	$(CXX) $(CXXFLAGS) $(OBJS) src/main.cc -o fasttext-bloom
+floret: $(OBJS) src/fasttext.cc src/main.cc
+	$(CXX) $(CXXFLAGS) $(OBJS) src/main.cc -o floret
 
 clean:
-	rm -rf *.o *.gcno *.gcda fasttext-bloom *.bc webassembly/fasttext_wasm.js webassembly/fasttext_wasm.wasm
+	rm -rf *.o *.gcno *.gcda floret *.bc webassembly/fasttext_wasm.js webassembly/fasttext_wasm.wasm
 
 
 EMCXX = em++
