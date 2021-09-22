@@ -3,10 +3,12 @@
 *.bin
 *.vec
 *.bc
+*.egg-info
 .DS_Store
+.hypothesis
+build
 data
-fasttext
-result
-website/node_modules/
-package-lock.json
-node_modules/
+dist
+/floret
+python/floret_module/*.so
+__pycache__
