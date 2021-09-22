@@ -180,7 +180,7 @@ void Args::parseArgs(const std::vector<std::string>& args) {
 	ai--;
       } else if (args[ai] == "-hashCount") {
 	hashCount = std::stoi(args.at(ai + 1));
-        if (hashCount < 1 or hashCount >= 5) {
+        if (hashCount < 1 || hashCount >= 5) {
 	  std::cerr << "Unsupported hashCount (range: 1-4): " << hashCount << std::endl;
           printHelp();
           exit(EXIT_FAILURE);
