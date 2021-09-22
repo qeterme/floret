@@ -9,14 +9,14 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import fasttext_pybind as fasttext
+import floret_pybind as floret
 import numpy as np
 import multiprocessing
 import sys
 from itertools import chain
 
-loss_name = fasttext.loss_name
-model_name = fasttext.model_name
+loss_name = floret.loss_name
+model_name = floret.model_name
 EOS = "</s>"
 BOW = "<"
 EOW = ">"
@@ -25,8 +25,8 @@ displayed_errors = {}
 
 
 class _Meter(object):
-    def __init__(self, fasttext_model, meter):
-        self.f = fasttext_model
+    def __init__(self, floret_model, meter):
+        self.f = floret_model
         self.m = meter
 
     def score_vs_true(self, label):
@@ -77,7 +77,7 @@ class _Meter(object):
         return recall
 
 
-class _FastText(object):
+class _floret(object):
     """
     This class defines the API to inspect models and should not be used to
     create objects. It will be returned by functions such as load_model or
@@ -89,7 +89,7 @@ class _FastText(object):
     """
 
     def __init__(self, model_path=None, args=None):
-        self.f = fasttext.fasttext()
+        self.f = floret.fasttext()
         if model_path is not None:
             self.f.loadModel(model_path)
         self._words = None
@@ -117,7 +117,7 @@ class _FastText(object):
     def get_word_vector(self, word):
         """Get the vector representation of word."""
         dim = self.get_dimension()
-        b = fasttext.Vector(dim)
+        b = floret.Vector(dim)
         self.f.getWordVector(b, word)
         return np.array(b)
 
@@ -134,7 +134,7 @@ class _FastText(object):
             )
         text += "\n"
         dim = self.get_dimension()
-        b = fasttext.Vector(dim)
+        b = floret.Vector(dim)
         self.f.getSentenceVector(b, text)
         return np.array(b)
 
@@ -177,7 +177,7 @@ class _FastText(object):
         Given an index, get the corresponding vector of the Input Matrix.
         """
         dim = self.get_dimension()
-        b = fasttext.Vector(dim)
+        b = floret.Vector(dim)
         self.f.getInputVector(b, ind)
         return np.array(b)
 
@@ -302,6 +302,14 @@ class _FastText(object):
         """Save the model to the given path"""
         self.f.saveModel(path)
 
+    def save_vectors(self, path):
+        """Save the vectors to the given path"""
+        self.f.saveVectors(path)
+
+    def save_hash_only_vectors(self, path):
+        """Save the hash-only vectors to the given path"""
+        self.f.saveHashOnlyVectors(path)
+
     def test(self, path, k=1, threshold=0.0):
         """Evaluate supervised model using file given by path"""
         return self.f.test(path, k, threshold)
@@ -414,7 +422,7 @@ def _build_args(args, manually_set_args):
     if type(args["autotuneModelSize"]) == int:
         args["autotuneModelSize"] = str(args["autotuneModelSize"])
 
-    a = fasttext.args()
+    a = floret.args()
     for (k, v) in args.items():
         setattr(a, k, v)
         if k in manually_set_args:
@@ -428,13 +436,13 @@ def _build_args(args, manually_set_args):
 
 def tokenize(text):
     """Given a string of text, tokenize it and return a list of tokens"""
-    f = fasttext.fasttext()
+    f = floret.fasttext()
     return f.tokenize(text)
 
 
 def load_model(path):
     """Load a model given a filepath and return a model object."""
-    return _FastText(model_path=path)
+    return _floret(model_path=path)
 
 
 unsupervised_default = {
@@ -527,8 +535,8 @@ def train_supervised(*kargs, **kwargs):
     args, manually_set_args = read_args(kargs, kwargs, arg_names,
                                         supervised_default)
     a = _build_args(args, manually_set_args)
-    ft = _FastText(args=a)
-    fasttext.train(ft.f, a)
+    ft = _floret(args=a)
+    floret.train(ft.f, a)
     ft.set_args(ft.f.getArgs())
     return ft
 
@@ -554,8 +562,8 @@ def train_unsupervised(*kargs, **kwargs):
     args, manually_set_args = read_args(kargs, kwargs, arg_names,
                                         unsupervised_default)
     a = _build_args(args, manually_set_args)
-    ft = _FastText(args=a)
-    fasttext.train(ft.f, a)
+    ft = _floret(args=a)
+    floret.train(ft.f, a)
     ft.set_args(ft.f.getArgs())
     return ft
 

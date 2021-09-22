@@ -9,14 +9,14 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from .FastText import train_supervised
-from .FastText import train_unsupervised
-from .FastText import load_model
-from .FastText import tokenize
-from .FastText import EOS
-from .FastText import BOW
-from .FastText import EOW
+from .floret import train_supervised
+from .floret import train_unsupervised
+from .floret import load_model
+from .floret import tokenize
+from .floret import EOS
+from .floret import BOW
+from .floret import EOW
 
-from .FastText import cbow
-from .FastText import skipgram
-from .FastText import supervised
+from .floret import cbow
+from .floret import skipgram
+from .floret import supervised

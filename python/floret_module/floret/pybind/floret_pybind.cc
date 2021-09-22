@@ -85,7 +85,7 @@ std::pair<std::vector<py::str>, std::vector<py::str>> getLineText(
   return std::pair<std::vector<py::str>, std::vector<py::str>>(words, labels);
 }
 
-PYBIND11_MODULE(fasttext_pybind, m) {
+PYBIND11_MODULE(floret_pybind, m) {
   py::class_<fasttext::Args>(m, "args")
       .def(py::init<>())
       .def_readwrite("input", &fasttext::Args::input)
@@ -269,6 +269,12 @@ PYBIND11_MODULE(fasttext_pybind, m) {
       .def(
           "saveModel",
           [](fasttext::FastText& m, std::string s) { m.saveModel(s); })
+      .def(
+          "saveVectors",
+          [](fasttext::FastText& m, std::string s) { m.saveVectors(s); })
+      .def(
+          "saveHashOnlyVectors",
+          [](fasttext::FastText& m, std::string s) { m.saveHashOnlyVectors(s); })
       .def(
           "test",
           [](fasttext::FastText& m,

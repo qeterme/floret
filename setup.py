@@ -20,30 +20,20 @@ import os
 import subprocess
 import platform
 import io
+import pybind11
 
-__version__ = '0.9.2'
+__version__ = '0.10.0'
 FASTTEXT_SRC = "src"
 
 # Based on https://github.com/pybind/python_example
 
 class get_pybind_include(object):
-    """Helper class to determine the pybind11 include path
-
-    The purpose of this class is to postpone importing pybind11
-    until it is actually installed, so that the ``get_include()``
-    method can be invoked. """
+    """Helper class to determine the pybind11 include path"""
 
     def __init__(self, user=False):
-        try:
-            import pybind11
-        except ImportError:
-            if subprocess.call([sys.executable, '-m', 'pip', 'install', 'pybind11']):
-                raise RuntimeError('pybind11 install failed.')
-
         self.user = user
 
     def __str__(self):
-        import pybind11
         return pybind11.get_include(self.user)
 
 try:
@@ -63,9 +53,9 @@ fasttext_src_cc = list(
 
 ext_modules = [
     Extension(
-        str('fasttext_pybind'),
+        str('floret_pybind'),
         [
-            str('python/fasttext_module/fasttext/pybind/fasttext_pybind.cc'),
+            str('python/floret_module/floret/pybind/floret_pybind.cc'),
         ] + fasttext_src_cc,
         include_dirs=[
             # Path to pybind11 headers
@@ -166,24 +156,24 @@ def _get_readme():
 
 
 setup(
-    name='fasttext',
+    name='floret',
     version=__version__,
     author='Onur Celebi',
     author_email='celebio@fb.com',
-    description='fasttext Python bindings',
+    description='floret Python bindings',
     long_description=_get_readme(),
     ext_modules=ext_modules,
-    url='https://github.com/facebookresearch/fastText',
+    url='https://github.com/explosion/floret',
     license='MIT',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Software Development',
         'Topic :: Scientific/Engineering',
         'Operating System :: Microsoft :: Windows',
@@ -194,10 +184,10 @@ setup(
     install_requires=['pybind11>=2.2', "setuptools >= 0.7.0", "numpy"],
     cmdclass={'build_ext': BuildExt},
     packages=[
-        str('fasttext'),
-        str('fasttext.util'),
-        str('fasttext.tests'),
+        str('floret'),
+        str('floret.util'),
+        str('floret.tests'),
     ],
-    package_dir={str(''): str('python/fasttext_module')},
+    package_dir={str(''): str('python/floret_module')},
     zip_safe=False,
 )
