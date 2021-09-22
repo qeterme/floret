@@ -9,10 +9,10 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from fasttext import train_supervised
-from fasttext import train_unsupervised
-from fasttext import util
-import fasttext
+from floret import train_supervised
+from floret import train_unsupervised
+from floret import util
+import floret
 import os
 import subprocess
 import unittest
@@ -25,7 +25,7 @@ try:
     import unicode
 except ImportError:
     pass
-from fasttext.tests.test_configurations import get_supervised_models
+from floret.tests.test_configurations import get_supervised_models
 
 
 def eprint(cls, *args, **kwargs):
@@ -290,7 +290,7 @@ class TestFastTextUnitPy(unittest.TestCase):
         words, freqs = f.get_words(include_freq=True)
         foundEOS = False
         for word, freq in zip(words, freqs):
-            if word == fasttext.EOS:
+            if word == floret.EOS:
                 foundEOS = True
             else:
                 self.assertEqual(words_python[word], freq)
@@ -316,16 +316,16 @@ class TestFastTextUnitPy(unittest.TestCase):
             f.get_subwords(w)
 
     def gen_test_tokenize(self, kwargs):
-        self.assertEqual(["asdf", "asdb"], fasttext.tokenize("asdf asdb"))
-        self.assertEqual(["asdf"], fasttext.tokenize("asdf"))
-        self.assertEqual([fasttext.EOS], fasttext.tokenize("\n"))
-        self.assertEqual(["asdf", fasttext.EOS], fasttext.tokenize("asdf\n"))
-        self.assertEqual([], fasttext.tokenize(""))
-        self.assertEqual([], fasttext.tokenize(" "))
+        self.assertEqual(["asdf", "asdb"], floret.tokenize("asdf asdb"))
+        self.assertEqual(["asdf"], floret.tokenize("asdf"))
+        self.assertEqual([floret.EOS], floret.tokenize("\n"))
+        self.assertEqual(["asdf", floret.EOS], floret.tokenize("asdf\n"))
+        self.assertEqual([], floret.tokenize(""))
+        self.assertEqual([], floret.tokenize(" "))
         # An empty string is not a token (it's just whitespace)
         # So the minimum length must be 1
         words = get_random_words(100, 1, 20)
-        self.assertEqual(words, fasttext.tokenize(" ".join(words)))
+        self.assertEqual(words, floret.tokenize(" ".join(words)))
 
     def gen_test_unsupervised_dimension(self, kwargs):
         if "dim" in kwargs:
