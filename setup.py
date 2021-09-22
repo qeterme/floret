@@ -147,21 +147,18 @@ class BuildExt(build_ext):
 
 
 def _get_readme():
-    """
-    Use pandoc to generate rst from md.
-    pandoc --from=markdown --to=rst --output=python/README.rst python/README.md
-    """
-    with io.open("python/README.rst", encoding='utf-8') as fid:
-        return fid.read()
+    with io.open("python/README.md", encoding='utf-8') as f:
+        return f.read()
 
 
 setup(
     name='floret',
     version=__version__,
-    author='Onur Celebi',
-    author_email='celebio@fb.com',
+    author='Explosion',
+    author_email='contact@explosion.ai',
     description='floret Python bindings',
     long_description=_get_readme(),
+    long_description_content_type="text/markdown",
     ext_modules=ext_modules,
     url='https://github.com/explosion/floret',
     license='MIT',
