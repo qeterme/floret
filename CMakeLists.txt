@@ -7,17 +7,18 @@
 #
 
 cmake_minimum_required(VERSION 2.8.9)
-project(fasttext)
+project(floret)
 
 # The version number.
-set (fasttext_VERSION_MAJOR 0)
-set (fasttext_VERSION_MINOR 1)
+set (floret_VERSION_MAJOR 0)
+set (floret_VERSION_MINOR 1)
 
 include_directories(fasttext)
 
-set(CMAKE_CXX_FLAGS " -pthread -std=c++11 -funroll-loops -O3 -march=native")
+set(CMAKE_CXX_FLAGS " -pthread -std=c++11 -funroll-loops -O3")
 
 set(HEADER_FILES
+    src/MurmurHash3.h
     src/args.h
     src/autotune.h
     src/densematrix.h
@@ -34,6 +35,7 @@ set(HEADER_FILES
     src/vector.h)
 
 set(SOURCE_FILES
+    src/MurmurHash3.cpp
     src/args.cc
     src/autotune.cc
     src/densematrix.cc
@@ -52,27 +54,27 @@ set(SOURCE_FILES
 
 if (NOT MSVC)
   include(GNUInstallDirs)
-  configure_file("fasttext.pc.in" "fasttext.pc" @ONLY)
-  install(FILES "${CMAKE_BINARY_DIR}/fasttext.pc" DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+  configure_file("floret.pc.in" "floret.pc" @ONLY)
+  install(FILES "${CMAKE_BINARY_DIR}/floret.pc" DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif()
 
-add_library(fasttext-shared SHARED ${SOURCE_FILES} ${HEADER_FILES})
-add_library(fasttext-static STATIC ${SOURCE_FILES} ${HEADER_FILES})
-add_library(fasttext-static_pic STATIC ${SOURCE_FILES} ${HEADER_FILES})
-set_target_properties(fasttext-shared PROPERTIES OUTPUT_NAME fasttext
-  SOVERSION "${fasttext_VERSION_MAJOR}")
-set_target_properties(fasttext-static PROPERTIES OUTPUT_NAME fasttext)
-set_target_properties(fasttext-static_pic PROPERTIES OUTPUT_NAME fasttext_pic
+add_library(floret-shared SHARED ${SOURCE_FILES} ${HEADER_FILES})
+add_library(floret-static STATIC ${SOURCE_FILES} ${HEADER_FILES})
+add_library(floret-static_pic STATIC ${SOURCE_FILES} ${HEADER_FILES})
+set_target_properties(floret-shared PROPERTIES OUTPUT_NAME floret
+  SOVERSION "${floret_VERSION_MAJOR}")
+set_target_properties(floret-static PROPERTIES OUTPUT_NAME floret)
+set_target_properties(floret-static_pic PROPERTIES OUTPUT_NAME floret_pic
   POSITION_INDEPENDENT_CODE True)
-add_executable(fasttext-bin src/main.cc)
-target_link_libraries(fasttext-bin pthread fasttext-static)
-set_target_properties(fasttext-bin PROPERTIES PUBLIC_HEADER "${HEADER_FILES}" OUTPUT_NAME fasttext)
-install (TARGETS fasttext-shared
+add_executable(floret-bin src/main.cc)
+target_link_libraries(floret-bin pthread floret-static)
+set_target_properties(floret-bin PROPERTIES PUBLIC_HEADER "${HEADER_FILES}" OUTPUT_NAME floret)
+install (TARGETS floret-shared
     LIBRARY DESTINATION lib)
-install (TARGETS fasttext-static
+install (TARGETS floret-static
     ARCHIVE DESTINATION lib)
-install (TARGETS fasttext-static_pic
+install (TARGETS floret-static_pic
     ARCHIVE DESTINATION lib)
-install (TARGETS fasttext-bin
+install (TARGETS floret-bin
     RUNTIME DESTINATION bin
- PUBLIC_HEADER DESTINATION include/fasttext)
+ PUBLIC_HEADER DESTINATION include/floret)

@@ -65,6 +65,7 @@ class Dictionary {
   static const std::string EOS;
   static const std::string BOW;
   static const std::string EOW;
+  static const uint32_t MURMURHASH_SEED = 2166136261;
 
   explicit Dictionary(std::shared_ptr<Args>);
   explicit Dictionary(std::shared_ptr<Args>, std::istream&);
@@ -88,6 +89,7 @@ class Dictionary {
       std::vector<int32_t>&,
       std::vector<std::string>* substrings = nullptr) const;
   uint32_t hash(const std::string& str) const;
+  void murmurhash(const std::string& str, std::vector<uint32_t>* keys) const;
   void add(const std::string&);
   bool readWord(std::istream&, std::string&) const;
   void readFromFile(std::istream&);

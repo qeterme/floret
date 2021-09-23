@@ -18,7 +18,7 @@ using namespace fasttext;
 
 void printUsage() {
   std::cerr
-      << "usage: fasttext <command> <args>\n\n"
+      << "usage: floret <command> <args>\n\n"
       << "The commands supported by fasttext are:\n\n"
       << "  supervised              train a supervised classifier\n"
       << "  quantize                quantize a model to reduce the memory "
@@ -44,12 +44,12 @@ void printUsage() {
 }
 
 void printQuantizeUsage() {
-  std::cerr << "usage: fasttext quantize <args>" << std::endl;
+  std::cerr << "usage: floret quantize <args>" << std::endl;
 }
 
 void printTestUsage() {
   std::cerr
-      << "usage: fasttext test <model> <test-data> [<k>] [<th>]\n\n"
+      << "usage: floret test <model> <test-data> [<k>] [<th>]\n\n"
       << "  <model>      model filename\n"
       << "  <test-data>  test data filename (if -, read from stdin)\n"
       << "  <k>          (optional; 1 by default) predict top k labels\n"
@@ -59,7 +59,7 @@ void printTestUsage() {
 
 void printPredictUsage() {
   std::cerr
-      << "usage: fasttext predict[-prob] <model> <test-data> [<k>] [<th>]\n\n"
+      << "usage: floret predict[-prob] <model> <test-data> [<k>] [<th>]\n\n"
       << "  <model>      model filename\n"
       << "  <test-data>  test data filename (if -, read from stdin)\n"
       << "  <k>          (optional; 1 by default) predict top k labels\n"
@@ -69,7 +69,7 @@ void printPredictUsage() {
 
 void printTestLabelUsage() {
   std::cerr
-      << "usage: fasttext test-label <model> <test-data> [<k>] [<th>]\n\n"
+      << "usage: floret test-label <model> <test-data> [<k>] [<th>]\n\n"
       << "  <model>      model filename\n"
       << "  <test-data>  test data filename\n"
       << "  <k>          (optional; 1 by default) predict top k labels\n"
@@ -78,19 +78,19 @@ void printTestLabelUsage() {
 }
 
 void printPrintWordVectorsUsage() {
-  std::cerr << "usage: fasttext print-word-vectors <model>\n\n"
+  std::cerr << "usage: floret print-word-vectors <model>\n\n"
             << "  <model>      model filename\n"
             << std::endl;
 }
 
 void printPrintSentenceVectorsUsage() {
-  std::cerr << "usage: fasttext print-sentence-vectors <model>\n\n"
+  std::cerr << "usage: floret print-sentence-vectors <model>\n\n"
             << "  <model>      model filename\n"
             << std::endl;
 }
 
 void printPrintNgramsUsage() {
-  std::cerr << "usage: fasttext print-ngrams <model> <word>\n\n"
+  std::cerr << "usage: floret print-ngrams <model> <word>\n\n"
             << "  <model>      model filename\n"
             << "  <word>       word to print\n"
             << std::endl;
@@ -113,21 +113,21 @@ void quantize(const std::vector<std::string>& args) {
 }
 
 void printNNUsage() {
-  std::cout << "usage: fasttext nn <model> <k>\n\n"
+  std::cout << "usage: floret nn <model> <k>\n\n"
             << "  <model>      model filename\n"
             << "  <k>          (optional; 10 by default) predict top k labels\n"
             << std::endl;
 }
 
 void printAnalogiesUsage() {
-  std::cout << "usage: fasttext analogies <model> <k>\n\n"
+  std::cout << "usage: floret analogies <model> <k>\n\n"
             << "  <model>      model filename\n"
             << "  <k>          (optional; 10 by default) predict top k labels\n"
             << std::endl;
 }
 
 void printDumpUsage() {
-  std::cout << "usage: fasttext dump <model> <option>\n\n"
+  std::cout << "usage: floret dump <model> <option>\n\n"
             << "  <model>      model filename\n"
             << "  <option>     option from args,dict,input,output" << std::endl;
 }
@@ -381,6 +381,9 @@ void train(const std::vector<std::string> args) {
   }
   fasttext->saveModel(outputFileName);
   fasttext->saveVectors(a.output + ".vec");
+  if (a.hashOnly) {
+    fasttext->saveHashOnlyVectors(a.output + ".floret");
+  }
   if (a.saveOutput) {
     fasttext->saveOutput(a.output + ".output");
   }

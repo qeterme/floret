@@ -96,8 +96,12 @@ int32_t FastText::getWordId(const std::string& word) const {
 }
 
 int32_t FastText::getSubwordId(const std::string& subword) const {
-  int32_t h = dict_->hash(subword) % args_->bucket;
-  return dict_->nwords() + h;
+  if (args_->hashOnly) {
+    return -1;
+  } else {
+    int32_t h = dict_->hash(subword) % args_->bucket;
+    return dict_->nwords() + h;
+  }
 }
 
 int32_t FastText::getLabelId(const std::string& label) const {
@@ -121,9 +125,19 @@ void FastText::getWordVector(Vector& vec, const std::string& word) const {
 
 void FastText::getSubwordVector(Vector& vec, const std::string& subword) const {
   vec.zero();
-  int32_t h = dict_->hash(subword) % args_->bucket;
-  h = h + dict_->nwords();
-  addInputVector(vec, h);
+  if (args_->hashOnly) {
+    std::vector<uint32_t> hashes;
+    dict_->murmurhash(subword, &hashes);
+    for (size_t i = 0; i < hashes.size(); i++) {
+      int32_t h = hashes[i] % args_->bucket;
+      h = h + dict_->nwords();
+      addInputVector(vec, h);
+    }
+  } else {
+    int32_t h = dict_->hash(subword) % args_->bucket;
+    h = h + dict_->nwords();
+    addInputVector(vec, h);
+  }
 }
 
 void FastText::saveVectors(const std::string& filename) {
@@ -141,6 +155,29 @@ void FastText::saveVectors(const std::string& filename) {
     std::string word = dict_->getWord(i);
     getWordVector(vec, word);
     ofs << word << " " << vec << std::endl;
+  }
+  ofs.close();
+}
+
+void FastText::saveHashOnlyVectors(const std::string& filename) {
+  if (!input_ || !output_) {
+    throw std::runtime_error("Model never trained");
+  }
+  std::ofstream ofs(filename);
+  if (!ofs.is_open()) {
+    throw std::invalid_argument(
+        filename + " cannot be opened for saving vectors!");
+  }
+  // header: bucket dim minn maxn hashCount hashSeed BOW EOW
+  ofs << args_->bucket << " " << args_->dim << " ";
+  ofs << args_->minn << " " << args_->maxn << " ";
+  ofs << args_->hashCount << " " << dict_->MURMURHASH_SEED << " ";
+  ofs << dict_->BOW << " " << dict_->EOW << std::endl;
+  Vector vec(args_->dim);
+  for (int32_t i = dict_->nwords(); i < dict_->nwords() + args_->bucket; i++) {
+    vec.zero();
+    addInputVector(vec, i);
+    ofs << i - dict_->nwords() << " " << vec << std::endl;
   }
   ofs.close();
 }
@@ -526,11 +563,13 @@ std::vector<std::pair<std::string, Vector>> FastText::getNgramVectors(
   std::vector<int32_t> ngrams;
   std::vector<std::string> substrings;
   dict_->getSubwords(word, ngrams, substrings);
-  assert(ngrams.size() <= substrings.size());
-  for (int32_t i = 0; i < ngrams.size(); i++) {
+  assert(ngrams.size() <= substrings.size() * args_->hashCount);
+  for (int32_t i = 0; i < substrings.size(); i++) {
     Vector vec(args_->dim);
-    if (ngrams[i] >= 0) {
-      vec.addRow(*input_, ngrams[i]);
+    for (int32_t j = 0; j < args_->hashCount; j++) {
+      if (ngrams[args_->hashCount * i + j] >= 0) {
+        vec.addRow(*input_, ngrams[i]);
+      }
     }
     result.push_back(std::make_pair(substrings[i], std::move(vec)));
   }
