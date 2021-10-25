@@ -22,7 +22,7 @@ import platform
 import io
 import pybind11
 
-__version__ = '0.10.0.dev1'
+__version__ = '0.10.0.dev2'
 FASTTEXT_SRC = "src"
 
 # Based on https://github.com/pybind/python_example
@@ -178,7 +178,7 @@ setup(
         'Operating System :: Unix',
         'Operating System :: MacOS',
     ],
-    install_requires=['numpy', 'scipy'],
+    install_requires=['numpy'],
     cmdclass={'build_ext': BuildExt},
     packages=[
         str('floret'),
