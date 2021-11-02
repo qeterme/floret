@@ -109,7 +109,7 @@ end up with a distinct representation.
 
 With the settings `-minn 4 -maxn 5 -mode floret -hashCount 2`, the embedding
 for the word `apple` is stored internally as the sum of 2 hashed rows for each
-of the word, 4-grams and 5-ngrams. The word is padded with the BOW and EOW
+of the word, 4-grams and 5-grams. The word is padded with the BOW and EOW
 characters `<` and `>`, creating the following word and subword entries:
 
 ```
@@ -158,7 +158,7 @@ A demo `.floret` table with `-bucket 10 -dim 10 -minn 2 -maxn3 -hashCount 2`:
 ```
 
 This table can be imported into a spaCy pipeline using `spacy init vectors` in
-spaCy v3.2+ with the option `--floret-vectors`:
+spaCy v3.2+ with the option `--mode floret`:
 
 ```bash
 spacy init vectors --mode floret vectors.floret spacy_vectors_dir
