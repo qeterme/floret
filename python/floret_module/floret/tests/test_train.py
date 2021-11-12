@@ -1,14 +1,15 @@
 import pytest
 from pathlib import Path
 import floret
+import os
 import sys
 from numpy.testing import assert_almost_equal
 
 
 @pytest.mark.parametrize(
-    "mode,value", [("fasttext", 0.0033344), ("floret", -0.00057555)]
+    "mode,value", [("fasttext", 0.0033344), ("floret", -0.00297588)]
 )
-def test_train_unsupervised_fasttext(mode, value):
+def test_train_unsupervised_fasttext(mode, value, tmpdir):
     data_path = Path(__file__).parent / "data.txt"
     model = floret.train_unsupervised(
         str(data_path),
@@ -28,11 +29,11 @@ def test_train_unsupervised_fasttext(mode, value):
     if sys.platform.startswith("linux"):
         assert_almost_equal(the_zero, value)
 
-    model.save_model(f"test_model_{mode}.bin")
-    model.save_vectors(f"test_model_{mode}.vectors")
-    model.save_floret_vectors(f"test_model_{mode}.floret")
+    model.save_model(os.path.join(tmpdir, f"test_model_{mode}.bin"))
+    model.save_vectors(os.path.join(tmpdir, f"test_model_{mode}.vectors"))
+    model.save_floret_vectors(os.path.join(tmpdir, f"test_model_{mode}.floret"))
 
-    model2 = floret.load_model(f"test_model_{mode}.bin")
+    model2 = floret.load_model(os.path.join(tmpdir, f"test_model_{mode}.bin"))
     assert model.get_word_vector("the")[0] == model2.get_word_vector("the")[0]
 
 

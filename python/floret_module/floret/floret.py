@@ -442,7 +442,7 @@ def _build_args(args, manually_set_args):
     a.saveOutput = 0  # Never use this
     if a.wordNgrams <= 1 and a.maxn == 0 and len(a.autotuneValidationFile) == 0 and a.mode != mode_name.floret:
         a.bucket = 0
-    if a.mode != "floret":
+    if a.mode != mode_name.floret:
         a.hashCount = 1
     return a
 
