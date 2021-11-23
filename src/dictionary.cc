@@ -175,16 +175,11 @@ void Dictionary::murmurhash(const std::string& str, std::vector<uint32_t>* keys)
   uint64_t entropy[2];
   const uint8_t* key = reinterpret_cast<const uint8_t*>(str.c_str());
   MurmurHash3_x64_128(key, str.size(), MURMURHASH_SEED, (void*) &entropy);
-  switch(args_->hashCount) {
-    case 4:
-      keys->insert(keys->begin(), entropy[1] >> 32);
-    case 3:
-      keys->insert(keys->begin(), entropy[1] & 0xffffffffu);
-    case 2:
-      keys->insert(keys->begin(), entropy[0] >> 32);
-    case 1:
-      keys->insert(keys->begin(), entropy[0] & 0xffffffffu);
-    }
+  keys->push_back(entropy[0] & 0xffffffffu);
+  keys->push_back(entropy[0] >> 32);
+  keys->push_back(entropy[1] & 0xffffffffu);
+  keys->push_back(entropy[1] >> 32);
+  keys->resize(args_->hashCount);
 }
 
 void Dictionary::computeSubwords(
