@@ -70,7 +70,7 @@ spacy init vectors LANG vectors.floret spacy_vectors_model --mode floret
 ## Notes
 
 `floret` contains all features of the original [`fasttext`
-module](https://pypi.org/project/fasttest). See the [`fasttext`
+module](https://pypi.org/project/fasttext). See the [`fasttext`
 docs](https://fasttext.cc/docs/en/python-module.html) for more information.
 
 The `fasttext` and `floret` binary formats saved with
