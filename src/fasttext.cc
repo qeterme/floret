@@ -329,14 +329,11 @@ void FastText::printInfo(real progress, real loss, std::ostream& log_stream) {
   int64_t eta;
   std::tie<double, double, int64_t>(wst, lr, eta) = progressInfo(progress);
 
-  log_stream << std::fixed;
-  log_stream << "Progress: ";
-  log_stream << std::setprecision(1) << std::setw(5) << (progress * 100) << "%";
-  log_stream << " words/sec/thread: " << std::setw(7) << int64_t(wst);
-  log_stream << " lr: " << std::setw(9) << std::setprecision(6) << lr;
-  log_stream << " avg.loss: " << std::setw(9) << std::setprecision(6) << loss;
-  log_stream << " ETA: " << utils::ClockPrint(eta);
-  log_stream << std::flush;
+  log_stream << (progress * 100);
+  log_stream << "\t" << int64_t(wst);
+  log_stream << "\t" << std::setprecision(6) << lr;
+  log_stream << "\t" << std::setprecision(6) << loss;
+  log_stream << "\t" << utils::ClockPrint(eta) << "\n";
 }
 
 std::vector<int32_t> FastText::selectEmbeddings(int32_t cutoff) const {
@@ -832,10 +829,10 @@ void FastText::startThreads(const TrainCallback& callback) {
   const int64_t ntokens = dict_->ntokens();
   // Same condition as trainThread
   while (keepTraining(ntokens)) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
     if (loss_ >= 0 && args_->verbose > 1) {
       real progress = real(tokenCount_) / (args_->epoch * ntokens);
-      std::cerr << "\r";
+      // std::cerr << "\r";
       printInfo(progress, loss_, std::cerr);
     }
   }
@@ -848,7 +845,7 @@ void FastText::startThreads(const TrainCallback& callback) {
     std::rethrow_exception(exception);
   }
   if (args_->verbose > 0) {
-    std::cerr << "\r";
+    // std::cerr << "\r";
     printInfo(1.0, loss_, std::cerr);
     std::cerr << std::endl;
   }

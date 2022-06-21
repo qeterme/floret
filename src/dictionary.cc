@@ -274,7 +274,7 @@ void Dictionary::readFromFile(std::istream& in) {
   while (readWord(in, word)) {
     add(word);
     if (ntokens_ % 1000000 == 0 && args_->verbose > 1) {
-      std::cerr << "\rRead " << ntokens_ / 1000000 << "M words" << std::flush;
+      std::cout << "\rRead " << ntokens_ / 1000000 << "M words" << std::flush;
     }
     if (size_ > 0.75 * MAX_VOCAB_SIZE) {
       minThreshold++;
@@ -285,9 +285,9 @@ void Dictionary::readFromFile(std::istream& in) {
   initTableDiscard();
   initNgrams();
   if (args_->verbose > 0) {
-    std::cerr << "\rRead " << ntokens_ / 1000000 << "M words" << std::endl;
-    std::cerr << "Number of words:  " << nwords_ << std::endl;
-    std::cerr << "Number of labels: " << nlabels_ << std::endl;
+    std::cout << "\rRead " << ntokens_ / 1000000 << "M words" << std::endl;
+    std::cout << "Number of words:  " << nwords_ << std::endl;
+    std::cout << "Number of labels: " << nlabels_ << std::endl;
   }
   if (size_ == 0) {
     throw std::invalid_argument(

@@ -1,6 +1,19 @@
+[tool.poetry]
+name = "floret"
+version = "0.1.0"
+description = ""
+authors = ["Peter Berkecz <berkecz.peter@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+typer = "^0.4.1"
+pybind11 = "^2.9.2"
+pytest = "^7.1.2"
+wandb = "^0.12.18"
+autopep8 = "^1.6.0"
+
+[tool.poetry.dev-dependencies]
+
 [build-system]
-requires = [
-    "setuptools>=0.7.0",
-    "pybind11",
-]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
